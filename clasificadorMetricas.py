@@ -1,3 +1,4 @@
+import math
 class clasificadorMetricas():
     def __init__(self):
         self.patron = None
@@ -53,8 +54,46 @@ class clasificadorMetricas():
         return clasePertenciente, distancias
 
     def ecuclidea(self):
-        pass
+        distancias = []
+        distanciaMenor = 0
+        clasePertenciente = 'c1'
+        for key in self.representantes:
+            #sumaDeCoordenada = 0
+            sumatoria = 0
+            for i in range(len(self.representantes[key])):
+                sumatoria += abs(self.patron[i] - self.representantes[key][i])**2
+            
+            print('Distancia de {}: {}'.format(key, sumatoria))
+            distancias.append(sumatoria)
+            if key == 'c1':
+                distanciaMenor = math.sqrt(sumatoria)
+            if math.sqrt(sumatoria) < distanciaMenor:
+                distanciaMenor = math.sqrt(sumatoria)
+                clasePertenciente = key
+
+        return clasePertenciente, distancias
 
     def infinito(self):
-        pass
-            
+        distancias = []
+        distanciaMenor = 0
+        clasePertenciente = 'c1'
+        for key in self.representantes:
+            #sumaDeCoordenada = 0
+            sumatoria = 0
+            aux = 0
+            for i in range(len(self.representantes[key])):
+                sumatoria = abs(self.patron[i] - self.representantes[key][i])
+                if sumatoria > aux : 
+                    aux=sumatoria 
+            print('Distancia de {}: {}'.format(key, sumatoria))
+            distancias.append(sumatoria)
+            if key == 'c1':
+                distanciaMenor = aux
+            if aux < distanciaMenor:
+                distanciaMenor = aux
+                clasePertenciente = key
+
+        return clasePertenciente, distancias
+
+    
+        

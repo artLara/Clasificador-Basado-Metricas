@@ -215,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.labelRes.setText('Clasificado en ' + className)
                 self.setDistancias(clasificacion[1])
 
-            elif self.radioButtonEuclidiana.isChecked():
+            elif self.radioButtonInfinito.isChecked():
                 clasificacion = self.clasificador.infinito()
                 className = clasificacion[0]
                 self.labelRes.setText('Clasificado en ' + className)
