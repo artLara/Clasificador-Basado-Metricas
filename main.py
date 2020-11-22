@@ -148,6 +148,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def generarGrafico(self, datos, patron, nameFile):
         #plt.grid(color='black', linestyle='-', linewidth=2)
+        if self.radioButtonCityBlock.isChecked() and nameFile == 'graficoRepre':
+            for i in datos:
+                plt.plot([patron[0], datos[i][0]], [patron[1], patron[1]], color='k')
+                plt.plot([datos[i][0], datos[i][0]], [patron[1], datos[i][1]], color='k')
+
+        if self.radioButtonEuclidiana.isChecked() and nameFile == 'graficoRepre':
+            for i in datos:
+                plt.plot([patron[0], datos[i][0]], [patron[1], datos[i][1]], color='k')
+
+        
         plt.scatter(patron[0], patron[1], label='Patron desconocido')
 
         for i in datos:
@@ -158,22 +168,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         plt.cla()
         plt.clf()
     
-    def generarGraficoRepresentantes(self, datos, patron, nameFile):
-        #plt.grid(color='black', linestyle='-', linewidth=2)
-        plt.scatter(patron[0], patron[1], label='Patron desconocido')
+    # def generarGraficoRepresentantes(self, datos, patron, nameFile):
+    #     #plt.grid(color='black', linestyle='-', linewidth=2)
+        
+    #     if self.radioButtonCityBlock.isChecked():
+    #         for clase in datos:    
+    #             plt.plot([patron[0], datos], y_values)
 
-        for clase in datos: 
-            plt.scatter(clase[0], datos[1], label=i)
+    #     plt.scatter(patron[0], patron[1], label='Patron desconocido')
 
-        plt.legend(loc="upper left")
-        plt.savefig(nameFile + '.png', dpi=75)
-        plt.cla()
-        plt.clf()
+    #     for clase in datos: 
+    #         plt.scatter(datos[0], datos[1], label=clase)
+
+    #     plt.legend(loc="upper left")
+    #     plt.savefig(nameFile + '.png', dpi=75)
+    #     plt.cla()
+    #     plt.clf()
 
     def setDistancias(self, distancias):
         cadena = ''
+        numeroClase = 1
         for i in distancias:
-            cadena += 'C1: ' + str(i) + '\n'
+            cadena += 'C' + str(numeroClase) + ': ' + str(i) + '\n'
+            numeroClase += 1 
 
         self.labelDistancias.setText(cadena)
                         
