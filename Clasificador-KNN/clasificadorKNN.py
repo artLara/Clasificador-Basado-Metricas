@@ -50,7 +50,7 @@ class clasificadorKNN():
             patron.addCaracteristica(carcateristica)
         self.patronDesconocido = patron
 
-    def desempateMinimo(self):
+    def desempateMedia(self):
         distancias={}
         n = {}
         for index in range(self.k):
@@ -61,6 +61,56 @@ class clasificadorKNN():
             distancias[self.patrones[index].getClase()] += self.patrones[index].getDistancia()
             n[self.patrones[index].getClase()] += 1
 
+        minimo = 0
+        claseMinima = ''
+        inicial = True
+        for key in distancias:
+            distancias[key] /= n[key]
+            if inicial:
+                minimo = distancias[key]
+                claseMinima = key
+                inicial = False
+
+            if distancias[key] < minimo:
+                minimo = distancias[key]
+                claseMinima = key
+
+        return claseMinima, distancias
+    def desempatePesos(self):
+        distancias={}
+        n = {}
+        for index in range(self.k):
+            if not (self.patrones[index].getClase() in distancias):
+                distancias[self.patrones[index].getClase()] = 0
+                n[self.patrones[index].getClase()] = 0
+
+            distancias[self.patrones[index].getClase()] += 1/self.patrones[index].getDistancia()
+            n[self.patrones[index].getClase()] += 1
+
+        minimo = 0
+        claseMinima = ''
+        inicial = True
+        for key in distancias:
+            distancias[key] /= n[key]
+            if inicial:
+                minimo = distancias[key]
+                claseMinima = key
+                inicial = False
+
+            if distancias[key] > minimo:
+                minimo = distancias[key]
+                claseMinima = key
+
+        return claseMinima, distancias
+    def desempateMinimo(self):
+        distancias = {}
+        n = {}
+        for index in range(len(self.patrones)):
+            if not (self.patrones[index].getClase() in distancias):
+                distancias[self.patrones[index].getClase()] = 0
+                n[self.patrones[index].getClase()] = 0
+            distancias[self.patrones[index].getClase()] += self.patrones[index].getDistancia()
+            n[self.patrones[index].getClase()] += 1
         minimo = 0
         claseMinima = ''
         inicial = True

@@ -290,6 +290,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if (not datos is None) and (not patron is None):
             self.clasificador.setPatronDesconcido(patron)
             self.clasificador.setPatrones(datos)
+            self.clasificador.setK(self.clasificador.k%len(self.clasificador.patrones));
 
             if self.radioButtonDistanciaMinina.isChecked():
                 clasificacion, patronesMinimos = self.clasificador.desempateMinimo()
@@ -297,12 +298,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.setDesempateTable(patronesMinimos)
 
             elif self.radioButtonDistanciaMedia.isChecked():
-                clasificacion, patronesMinimos = self.clasificador.desempateMinimo()
+                clasificacion, patronesMinimos = self.clasificador.desempateMedia()
                 self.labelRes.setText('Clasificado en ' + clasificacion)
                 self.setDesempateTable(patronesMinimos)
 
             elif self.radioButtonPesado.isChecked():
-                clasificacion, patronesMinimos = self.clasificador.desempateMinimo()
+                clasificacion, patronesMinimos = self.clasificador.desempatePesos()
                 self.labelRes.setText('Clasificado en ' + clasificacion)
                 self.setDesempateTable(patronesMinimos)
 
