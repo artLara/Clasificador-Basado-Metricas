@@ -1,55 +1,125 @@
 import math
 from Patron import *
 
-class clasificadorKNN():
+class Neurona():
     def __init__(self):
         self.patron = None
         self.patronDesconocido = None
         self.clases = None
         self.representantes = []
         self.patrones = None
-        self.k=1
+        self.w = None
+        self.b = None
+        self.errores = None
+        self.epocas = None
+        self.maxEpoch=1
+        self.lr = 0.001
 
-    def getPatronK(self):
-        return self.patrones[self.k - 1]
+    def getW(self):
+        return self.w
 
-    def setK(self, k):
-        self.k = k
+    def getB(self):
+        return self.b
+
+    def getErrores(self):
+        return self.errores
+
+    def getEpocas(self):
+        return self.epocas
 
     def setPatrones(self, data):
-        if self.patronDesconocido is None:
-            return
-
         self.patrones = []
-        count = 1
         for key in data:
             print('Clase:', key)
             for index in range(len(data[key][0])):
                 patron = Patron()
                 patron.setClase(key)
                 print('indice=', index)
+                listaCaracteristicas=[]
                 for listaPatrones in data[key]:
                     print('Carcateristicas agregada: ', listaPatrones[index])
-                    patron.addCaracteristica(listaPatrones[index])
-
-                patron.calcualarDistancia(self.patronDesconocido)
-                patron.setOrden(count)
-                count += 1
+                    listaCaracteristicas.append([listaPatrones[index]])
+                
+                patron.setCaracteristicas(listaCaracteristicas)
                 self.patrones.append(patron)
-            
-        self.ordenarPatrones()
 
         for p in self.patrones:
             print('=========')
             print(p.getClase())
             print(p.getCaracteristicas())
 
+        self.inicializarW(len(self.patrones[0].getCaracteristicas()))
+        self.inicializarB()
+        print('w=',self.w)
+        print('b=',self.b)
+        print('Number class', self.patrones[0].getNumberClass())
+        self.train()
+
+    def inicializarW(self, dim):
+        self.w = np.random.rand(dim,1) * 0.01
+
+    def inicializarB(self):
+        self.b = 1 #np.random.rand(1)
+
+    def setMaxEpoch(self, maxEpoch):
+        self.maxEpoch = maxEpoch
+
+    def setLearningRate(self, learningRate):
+        self.lr = learningRate
+
+    def hardlim(self, x):
+        if x >= 0:
+            x = 1
+        else:
+            x=0
+        return x  
+
+    def train(self):
+        self.errores = []
+        self.epocas = []
+        epoca = 1
+        while True:
+            errorGeneral = 0
+            for p in self.patrones:
+                a = self.hardlim(np.dot(self.w.transpose(),p.caracteristicas) + self.b)
+                error = p.getNumberClass() - a
+                self.w = self.w + error * p.caracteristicas
+                self.b = self.b + error
+                errorGeneral += abs(error)
+                print('>>>>Epoca ', epoca,'<<<<')
+                print('a=',a)
+                print('Error=',error)
+                print('w=',self.w)
+                print('b=',self.b)
+
+
+            self.errores.append(errorGeneral)
+            self.epocas.append(epoca)
+            epoca += 1
+            print('Errro general=', errorGeneral)
+            if errorGeneral == 0 or epoca>=self.maxEpoch:
+                break
+
+
+    def propagarHaciaAdelante(self, desconocido):
+        a = self.hardlim(np.dot(self.w.transpose(),desconocido.caracteristicas) + self.b)
+        return a
+
     def setPatronDesconcido(self, carcateristicas):
         patron = Patron()
+        listaCaracteristicas=[]
         for carcateristica in carcateristicas:
-            patron.addCaracteristica(carcateristica)
+            listaCaracteristicas.append(carcateristica)
+
         self.patronDesconocido = patron
 
+    def getConfusionMatrix(self):
+        matrix = {'pred0_0':0, 'pred1_1':0, 'pred1_0':0, 'pred0_1':0}
+        for p in self.patrones:
+            a = self.hardlim(np.dot(self.w.transpose(),p.caracteristicas) + self.b)
+            matrix['pred'+str(a)+'_'+str(p.getNumberClass())] += 1
+
+        return matrix
     #######Desempate distancia media
     def desempateMedia(self):
         distancias={}
@@ -172,69 +242,4 @@ class clasificadorKNN():
     def getRepresentantes(self):
         print('Representantes calculados:', self.representantes)
         return self.representantes
-
-    def cityBlock(self):
-        distancias = []
-        distanciaMenor = 0
-        clasePertenciente = 'c1'
-        for key in self.representantes:
-            #sumaDeCoordenada = 0
-            sumatoria = 0
-            for i in range(len(self.representantes[key])):
-                sumatoria += abs(self.patron[i] - self.representantes[key][i])
-            
-            print('Distancia de {}: {}'.format(key, sumatoria))
-            distancias.append(sumatoria)
-            if key == 'c1':
-                distanciaMenor = sumatoria
-
-            if sumatoria < distanciaMenor:
-                distanciaMenor = sumatoria
-                clasePertenciente = key
-
-        return clasePertenciente, distancias
-
-    def ecuclidea(self):
-        distancias = []
-        distanciaMenor = 0
-        clasePertenciente = 'c1'
-        for key in self.representantes:
-            #sumaDeCoordenada = 0
-            sumatoria = 0
-            for i in range(len(self.representantes[key])):
-                sumatoria += abs(self.patron[i] - self.representantes[key][i])**2
-            
-            print('Distancia de {}: {}'.format(key, sumatoria))
-            distancias.append(sumatoria)
-            if key == 'c1':
-                distanciaMenor = math.sqrt(sumatoria)
-            if math.sqrt(sumatoria) < distanciaMenor:
-                distanciaMenor = math.sqrt(sumatoria)
-                clasePertenciente = key
-
-        return clasePertenciente, distancias
-
-    def infinito(self):
-        distancias = []
-        distanciaMenor = 0
-        clasePertenciente = 'c1'
-        for key in self.representantes:
-            #sumaDeCoordenada = 0
-            sumatoria = 0
-            aux = 0
-            for i in range(len(self.representantes[key])):
-                sumatoria = abs(self.patron[i] - self.representantes[key][i])
-                if sumatoria > aux : 
-                    aux=sumatoria 
-            print('Distancia de {}: {}'.format(key, sumatoria))
-            distancias.append(sumatoria)
-            if key == 'c1':
-                distanciaMenor = aux
-            if aux < distanciaMenor:
-                distanciaMenor = aux
-                clasePertenciente = key
-
-        return clasePertenciente, distancias
-
-    
         

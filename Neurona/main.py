@@ -1,4 +1,4 @@
-from clasificadorKNN_ui import *
+from neurona_ui import *
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
@@ -11,7 +11,9 @@ from PyQt5.QtWidgets import*
 from PyQt5.QtGui import QPixmap 
 import math
 import os 
-from clasificadorKNN import clasificadorKNN
+from Neurona import Neurona
+from Patron import Patron
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
@@ -21,23 +23,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBoxNumeroClases.valueChanged.connect(self.numeroClasesValueChange)
         self.spinBoxNumeroPatrones.valueChanged.connect(self.numeroPatronesValueChange)
         self.spinBoxDimensionPatron.valueChanged.connect(self.numeroClasesValueChange)
-        self.spinBoxK.valueChanged.connect(self.kValueChange)
+        self.spinBoxEpocas.valueChanged.connect(self.maxEpochValueChange)
+        self.doubleSpinBoxLearningRate.valueChanged.connect(self.lrValueChange)
 
         self.tabWidget.currentChanged.connect(self.tabChange)
-        self.clasificador = clasificadorKNN()
+        self.clasificador = Neurona()
     
-
-    def kValueChange(self):
-        self.clasificador.setK(self.spinBoxK.value())
+    def lrValueChange(self):
+        self.clasificador.setLearningRate(self.doubleSpinBoxLearningRate.value())
+    
+    def maxEpochValueChange(self):
+        self.clasificador.setMaxEpoch(self.spinBoxEpocas.value())
         
     def tabChange(self):
         if self.tabWidget.currentIndex() == 1:
             datos = self.getDataTable()
             print('getDataTable()==>',datos)
             patron = self.getPatronDesconocido()
-            self.clasificador.setPatronDesconcido(patron)
+            # self.clasificador.setPatronDesconcido(patron)
             self.clasificador.setPatrones(datos)
-            self.rellenarDatosOrdenados()
+            # self.rellenarDatosOrdenados()
             if self.spinBoxDimensionPatron.value() == 2:
                 if (not datos is None) and (not patron is None):
                     self.generarGrafico(datos, patron, 'graficoTodos')
@@ -45,10 +50,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.pixmap = QPixmap('graficoTodos.png') 
                     # adding image to label 
                     self.imagenTodos.setPixmap(self.pixmap)
-                            
-                    self.generarGraficoK(datos, patron, self.clasificador.getPatronK().getDistancia())
+                    
+
+                    self.generarGraficoFronteraDesicion(datos, patron, self.clasificador.getW(), self.clasificador.getB())
                     # loading image 
-                    self.pixmap = QPixmap('graficoK.png') 
+                    self.pixmap = QPixmap('graficoFrontera.png') 
                     # adding image to label 
                     self.imagenK.setPixmap(self.pixmap)
 
@@ -61,6 +67,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     self.imagenTodos.setText('Datos erroneos')
                     self.imagenRepresentantes.setText('Datos erroneos')
+
+        if self.tabWidget.currentIndex() == 2:
+            datos = self.getDataTable()
+            patron = self.getPatronDesconocido()
+            # self.clasificador.setPatronDesconcido(patron)
+            self.clasificador.setPatrones(datos)
+            if (not datos is None) and (not patron is None):
+                self.generarGraficoEvolucionError(self.clasificador.getEpocas(), self.clasificador.getErrores())
+                # loading image 
+                self.pixmap = QPixmap('graficoError.png') 
+                # adding image to label 
+                self.imagenError.setPixmap(self.pixmap)
+
+                self.setConfusionMatrix(self.clasificador.getConfusionMatrix())
+
+            else:
+                self.imagenTodos.setText('Datos erroneos')
+                self.imagenRepresentantes.setText('Datos erroneos')
 
     def rellenarDatosOrdenados(self):
         self.tableWidgetCasosOrdenados.setColumnCount(2 + self.spinBoxDimensionPatron.value())
@@ -86,19 +110,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.tableWidgetCasosOrdenados.setItem(i, coor+2, QTableWidgetItem('{:.2f}'.format(self.clasificador.getPatronByIndex(i).getDistancia())))
             
 
-
-
-
     def numeroClasesValueChange(self):
         #Se dan el numero de columnas solicitadas
         self.tableDatos.setColumnCount(self.spinBoxNumeroClases.value() * self.spinBoxDimensionPatron.value())
         #Se agregan los nombres a las filas
         headers = []
         countHeaderClass = 0
-        numeroClase = 1
+        numeroClase = 0
         for i in range(self.spinBoxNumeroClases.value() * self.spinBoxDimensionPatron.value()):
             if i == countHeaderClass:
-                headers.append('C' + str(numeroClase))
+                headers.append('C ' + str(numeroClase))
                 countHeaderClass += self.spinBoxDimensionPatron.value()
                 numeroClase += 1
             else:
@@ -142,10 +163,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def getDataTable(self):
         clases = {}
         for i in range(self.spinBoxNumeroClases.value()):
-            clases['c'+ str(i+1)] = []
+            clases['c'+ str(i)] = []
         
         countHeaderClass = 0
-        numeroClase = 1
+        numeroClase = 0
         key = ''
         for j in range(self.spinBoxNumeroClases.value() * self.spinBoxDimensionPatron.value()):#Coulumns(Clases)
             if j == countHeaderClass:
@@ -188,57 +209,71 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except ValueError:
             return False
 
-    def generarGrafico(self, datos, patron, nameFile):
-        #plt.grid(color='black', linestyle='-', linewidth=2)
-        if self.radioButtonDistanciaMinina.isChecked() and nameFile == 'graficoRepre':
-            for i in datos:
-                plt.plot([patron[0], datos[i][0]], [patron[1], patron[1]], color='k')
-                plt.plot([datos[i][0], datos[i][0]], [patron[1], datos[i][1]], color='k')
+    def setConfusionMatrix(self, matrix):
+        print(matrix)
+        self.tableWidgetConfusionMatriz.setColumnCount(2)
+        self.tableWidgetConfusionMatriz.setRowCount(2)
+        #Se agregan los nombres a las filas
+        headers = ['Clase 0', 'Clase 1']
+        self.tableWidgetConfusionMatriz.setHorizontalHeaderLabels(headers)
 
-        if self.radioButtonDistanciaMedia.isChecked() and nameFile == 'graficoRepre':
-            for i in datos:
-                plt.plot([patron[0], datos[i][0]], [patron[1], datos[i][1]], color='k')
+        #Se agregan los nombres a las filas
+        rowsNames = ['Clasificado 0', 'Clasificado 1']
+        self.tableWidgetConfusionMatriz.setVerticalHeaderLabels(rowsNames)
+
+        self.tableWidgetConfusionMatriz.setItem(0, 0, QTableWidgetItem(str(matrix['pred0_0'])))
+        self.tableWidgetConfusionMatriz.setItem(0, 1, QTableWidgetItem(str(matrix['pred0_1'])))
+        self.tableWidgetConfusionMatriz.setItem(1, 0, QTableWidgetItem(str(matrix['pred1_0'])))
+        self.tableWidgetConfusionMatriz.setItem(1, 1, QTableWidgetItem(str(matrix['pred1_1'])))
 
         
+        
+    def generarGraficoEvolucionError(self, epocas, error):
+        plt.plot(epocas, error)
+
+        plt.xlabel("Epocas")
+        plt.ylabel("Error")
+        plt.legend()
+        plt.grid(linestyle='--')
+        plt.savefig('graficoError' + '.png', dpi=75)
+        plt.cla()
+        plt.clf()
+
+    def generarGrafico(self, datos, patron, nameFile):
         plt.scatter(patron[0], patron[1], label='Patron desconocido', marker='x')
 
         for i in datos:
             plt.scatter(datos[i][0], datos[i][1], label=i)
 
-        plt.legend(loc="lower right")
+        plt.legend()
         plt.grid(linestyle='--')
         plt.savefig(nameFile + '.png', dpi=75)
         plt.cla()
         plt.clf()
 
-    def generarGraficoK(self, datos, patron, radio=0):
+    def generarGraficoFronteraDesicion(self, datos, patron, w, b):
         
         ##############Graficar patron desconocido
         plt.scatter(patron[0], patron[1], label='Patron desconocido', marker='x')
-
-        ##############Graficar circunferencia 
-        if radio == 0:
-            try:
-                radio = math.sqrt((patron[0] - datos['c1'][0][0])**2 + (patron[1] - datos['c1'][1][0])**2)
-
-            except:
-                #TO DO
-                pass
-
-        radio += 0.1
-        theta = np.linspace(0, 2*np.pi, 100)
-        x1 = radio * np.cos(theta) + patron[0]
-        x2 = radio * np.sin(theta) + patron[1]
-        plt.plot(x1, x2)
         
         #############Graficar puntos
+        max_x = patron[0]
+        min_x = patron[0]
         for i in datos:
             plt.scatter(datos[i][0], datos[i][1], label=i)
-        
+            if max_x < max(datos[i][0]):
+                max_x = max(datos[i][0])
 
-        plt.legend(loc="lower right")
+            if min_x > min(datos[i][0]):
+                min_x = min(datos[i][0])
+
+        ## Frontera de descion
+        x, y = [min_x, max_x], [self.getY(w, b, min_x), self.getY(w, b, max_x)]
+        plt.plot(x, y)
+
+        plt.legend()
         plt.grid(linestyle='--')
-        plt.savefig('graficoK' + '.png', dpi=75)
+        plt.savefig('graficoFrontera' + '.png', dpi=75)
         plt.cla()
         plt.clf()
     
@@ -258,6 +293,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     #     plt.savefig(nameFile + '.png', dpi=75)
     #     plt.cla()
     #     plt.clf()
+
+    def getY(self, w, b, max_x):
+        m = -(w[0][0]/w[1][0])
+        return m*max_x - b/w[1][0]
 
     def setDistancias(self, distancias):
         cadena = ''
@@ -283,34 +322,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             rowCount += 1
 
     def clasificarButton(self):
-        className = 'Seleccione un opción de desempate'
-
         datos = self.getDataTable()
-        patron = self.getPatronDesconocido()
-        if (not datos is None) and (not patron is None):
-            self.clasificador.setPatronDesconcido(patron)
+        patronCaracteristicas = self.getPatronDesconocido()
+        if (not datos is None) and (not patronCaracteristicas is None):
             self.clasificador.setPatrones(datos)
-            self.clasificador.setK(self.clasificador.k%len(self.clasificador.patrones));
+            patronDesconocido = Patron()
+            listaCaracteristicas=[]
+            for caracteristica in patronCaracteristicas:
+                listaCaracteristicas.append([caracteristica])
 
-            if self.radioButtonDistanciaMinina.isChecked():
-                clasificacion, patronesMinimos = self.clasificador.desempateMinimo()
-                self.labelRes.setText('Clasificado en ' + clasificacion)
-                # print("Desmpate =>", patronesMinimos)
-                self.setDesempateTable(patronesMinimos)
-
-            elif self.radioButtonDistanciaMedia.isChecked():
-                clasificacion, patronesMinimos = self.clasificador.desempateMedia()
-                self.labelRes.setText('Clasificado en ' + clasificacion)
-                self.setDesempateTable(patronesMinimos)
-
-            elif self.radioButtonPesado.isChecked():
-                clasificacion, patronesMinimos = self.clasificador.desempatePesos()
-                self.labelRes.setText('Clasificado en ' + clasificacion)
-                self.setDesempateTable(patronesMinimos)
-
-            else:
-                self.labelRes.setText(className)            
-
+            patronDesconocido.setCaracteristicas(listaCaracteristicas)
+            clasificacion = self.clasificador.propagarHaciaAdelante(patronDesconocido)
+            self.labelRes.setText('Clasificado en C' + str(clasificacion))
+            
         else:
             self.labelRes.setText('Datos erroneos')
 
