@@ -158,12 +158,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 plt.plot([patron[0], datos[i][0]], [patron[1], datos[i][1]], color='k')
 
         
-        plt.scatter(patron[0], patron[1], label='Patron desconocido')
+        plt.scatter(patron[0], patron[1], label='Patron desconocido', marker='x')
 
         for i in datos:
             plt.scatter(datos[i][0], datos[i][1], label=i)
 
-        plt.legend(loc="upper left")
+        plt.legend()
         plt.savefig(nameFile + '.png', dpi=75)
         plt.cla()
         plt.clf()

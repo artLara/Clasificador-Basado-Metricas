@@ -63,12 +63,14 @@ class clasificadorMetricas():
             for i in range(len(self.representantes[key])):
                 sumatoria += abs(self.patron[i] - self.representantes[key][i])**2
             
+            sumatoria = math.sqrt(sumatoria)
             print('Distancia de {}: {}'.format(key, sumatoria))
+            
             distancias.append(sumatoria)
             if key == 'c1':
-                distanciaMenor = math.sqrt(sumatoria)
-            if math.sqrt(sumatoria) < distanciaMenor:
-                distanciaMenor = math.sqrt(sumatoria)
+                distanciaMenor = sumatoria
+            if sumatoria < distanciaMenor:
+                distanciaMenor = sumatoria
                 clasePertenciente = key
 
         return clasePertenciente, distancias
