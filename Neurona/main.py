@@ -5,12 +5,15 @@ from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 import random
+import time
+import _thread
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as Navi
 from PyQt5.QtWidgets import*
 from PyQt5.QtGui import QPixmap 
 import math
 import os 
+import pyautogui
 from Neurona import Neurona
 from Patron import Patron
 
@@ -20,16 +23,66 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self) 
         self.pushButtonClasificar.clicked.connect(self.clasificarButton)
+        self.pushButtonEstatico.clicked.connect(self.clasificarPaisajeButton)
         self.spinBoxNumeroClases.valueChanged.connect(self.numeroClasesValueChange)
         self.spinBoxNumeroPatrones.valueChanged.connect(self.numeroPatronesValueChange)
         self.spinBoxDimensionPatron.valueChanged.connect(self.numeroClasesValueChange)
         self.spinBoxEpocas.valueChanged.connect(self.maxEpochValueChange)
         self.doubleSpinBoxLearningRate.valueChanged.connect(self.lrValueChange)
         self.doubleSpinBoxError.valueChanged.connect(self.errorValueChange)
+        self.imagePaisaje.setPixmap(QPixmap('paisaje.png'))
+        self.radioButtonMouse.toggled.connect(self.mouseSelected)
+        self.radioButtonRGB.toggled.connect(self.staticValue)
 
+        
         self.tabWidget.currentChanged.connect(self.tabChange)
         self.clasificador = Neurona()
-    
+        self.clasificadorPaisaje = Neurona()
+        # self.clasificadorPaisaje.w = np.array([[-0.006],[-0.0086],[0.0118]])
+        # self.clasificadorPaisaje.b = 0
+        self.clasificadorPaisaje.w = np.array([[0.08274324],[-0.15992965],[0.17016709]])
+        self.clasificadorPaisaje.b = 0.72796389
+
+
+    def staticValue(self):
+        if self.radioButtonRGB.isChecked():
+            self.pushButtonEstatico.setEnabled(True)
+
+    def mouseSelected(self):
+        if self.radioButtonMouse.isChecked():
+            self.pushButtonEstatico.setEnabled(False)
+            # _thread.start_new_thread(self.getRGBbyMouse,())
+            try:
+                _thread.start_new_thread(self.getRGBbyMouse,())
+            except:
+                print('Error en thread')
+        
+    def getRGBbyMouse(self):
+        while True:
+            x, y = pyautogui.position()
+            rgb = pyautogui.pixel(x, y)
+            self.spinBoxR.setValue(rgb[0])
+            self.spinBoxG.setValue(rgb[1])
+            self.spinBoxB.setValue(rgb[2])
+
+            patronDesconocido = Patron()
+            listaCaracteristicas=[]
+            listaCaracteristicas.append([rgb[0]])
+            listaCaracteristicas.append([rgb[1]])
+            listaCaracteristicas.append([rgb[2]])
+            patronDesconocido.setCaracteristicas(listaCaracteristicas)
+            clasificacion = self.clasificadorPaisaje.propagarHaciaAdelante(patronDesconocido)
+            if clasificacion == 0:
+                self.labelResPaisaje.setText('Clasificado en Zona boscosa')
+            else:
+                self.labelResPaisaje.setText('Clasificado en Cielo azul')
+
+
+            if not self.radioButtonMouse.isChecked():
+                break
+            time.sleep(0.1)
+
+
     def lrValueChange(self):
         self.clasificador.setLearningRate(self.doubleSpinBoxLearningRate.value())
 
@@ -89,6 +142,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self.imagenTodos.setText('Datos erroneos')
                 self.imagenRepresentantes.setText('Datos erroneos')
+
 
     def rellenarDatosOrdenados(self):
         self.tableWidgetCasosOrdenados.setColumnCount(2 + self.spinBoxDimensionPatron.value())
@@ -341,6 +395,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             
         else:
             self.labelRes.setText('Datos erroneos')
+
+    def clasificarPaisajeButton(self):
+        patronDesconocido = Patron()
+        listaCaracteristicas=[]
+        listaCaracteristicas.append([self.spinBoxR.value()])
+        listaCaracteristicas.append([self.spinBoxG.value()])
+        listaCaracteristicas.append([self.spinBoxB.value()])
+        patronDesconocido.setCaracteristicas(listaCaracteristicas)
+        clasificacion = self.clasificadorPaisaje.propagarHaciaAdelante(patronDesconocido)
+        if clasificacion == 0:
+            self.labelResPaisaje.setText('Clasificado en Zona boscosa')
+        else:
+            self.labelResPaisaje.setText('Clasificado en Cielo azul')
 
     
     def __del__(self):
