@@ -13,7 +13,8 @@ class Neurona():
         self.errores = None
         self.epocas = None
         self.maxEpoch=1
-        self.lr = 0.001
+        self.lr = 0.1
+        self.errorMinimo=0.0001
 
     def getW(self):
         return self.w
@@ -59,13 +60,16 @@ class Neurona():
         self.w = np.random.rand(dim,1) * 0.01
 
     def inicializarB(self):
-        self.b = 1 #np.random.rand(1)
+        self.b = np.random.rand(1) * 0.01
 
     def setMaxEpoch(self, maxEpoch):
         self.maxEpoch = maxEpoch
 
     def setLearningRate(self, learningRate):
         self.lr = learningRate
+
+    def setErrorMinimo(self, error):
+        self.errorMinimo = error
 
     def hardlim(self, x):
         if x >= 0:
@@ -83,8 +87,8 @@ class Neurona():
             for p in self.patrones:
                 a = self.hardlim(np.dot(self.w.transpose(),p.caracteristicas) + self.b)
                 error = p.getNumberClass() - a
-                self.w = self.w + error * p.caracteristicas
-                self.b = self.b + error
+                self.w = self.w + error * p.caracteristicas * self.lr
+                self.b = self.b + error * self.lr
                 errorGeneral += abs(error)
                 print('>>>>Epoca ', epoca,'<<<<')
                 print('a=',a)
@@ -97,7 +101,7 @@ class Neurona():
             self.epocas.append(epoca)
             epoca += 1
             print('Errro general=', errorGeneral)
-            if errorGeneral == 0 or epoca>=self.maxEpoch:
+            if errorGeneral <= self.errorMinimo or epoca>=self.maxEpoch:
                 break
 
 

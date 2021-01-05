@@ -25,7 +25,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Neurona</string>
+       <string>Perceptrón</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -102,7 +102,7 @@
                 <item>
                  <widget class="QLabel" name="label_12">
                   <property name="text">
-                   <string>Epocas</string>
+                   <string>Épocas</string>
                   </property>
                  </widget>
                 </item>
@@ -128,11 +128,40 @@
                   <property name="decimals">
                    <number>4</number>
                   </property>
+                  <property name="minimum">
+                   <double>0.000100000000000</double>
+                  </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
                   </property>
                   <property name="singleStep">
-                   <double>0.001000000000000</double>
+                   <double>0.010000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>0.100000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>Error mínimo permitido</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBoxError">
+                  <property name="decimals">
+                   <number>4</number>
+                  </property>
+                  <property name="minimum">
+                   <double>0.000100000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.000100000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>0.000100000000000</double>
                   </property>
                  </widget>
                 </item>

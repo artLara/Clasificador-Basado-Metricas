@@ -25,12 +25,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBoxDimensionPatron.valueChanged.connect(self.numeroClasesValueChange)
         self.spinBoxEpocas.valueChanged.connect(self.maxEpochValueChange)
         self.doubleSpinBoxLearningRate.valueChanged.connect(self.lrValueChange)
+        self.doubleSpinBoxError.valueChanged.connect(self.errorValueChange)
 
         self.tabWidget.currentChanged.connect(self.tabChange)
         self.clasificador = Neurona()
     
     def lrValueChange(self):
         self.clasificador.setLearningRate(self.doubleSpinBoxLearningRate.value())
+
+    def errorValueChange(self):
+        self.clasificador.setErrorMinimo(self.doubleSpinBoxError.value())
     
     def maxEpochValueChange(self):
         self.clasificador.setMaxEpoch(self.spinBoxEpocas.value())
