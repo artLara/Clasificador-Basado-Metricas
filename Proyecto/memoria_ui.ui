@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>727</height>
+    <width>645</width>
+    <height>809</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,8 +52,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>536</width>
-             <height>593</height>
+             <width>593</width>
+             <height>675</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -96,8 +96,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>512</width>
-                 <height>359</height>
+                 <width>569</width>
+                 <height>381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_7">
@@ -132,34 +132,34 @@
                <string/>
               </property>
               <layout class="QGridLayout" name="gridLayout_6">
-               <item row="1" column="5">
+               <item row="1" column="6">
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="1" column="8">
+                <widget class="QSpinBox" name="spinBox_pepper">
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="7">
                 <widget class="QLabel" name="label_8">
                  <property name="text">
                   <string>Ruido sustractivo</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="6">
-                <widget class="QSpinBox" name="spinBox_2"/>
-               </item>
-               <item row="1" column="3">
-                <widget class="QLabel" name="label_7">
-                 <property name="text">
-                  <string>%</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QSpinBox" name="spinBox"/>
-               </item>
-               <item row="1" column="7">
-                <widget class="QLabel" name="label_9">
-                 <property name="text">
-                  <string>%</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="8">
+               <item row="1" column="10">
                 <spacer name="horizontalSpacer_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -171,6 +171,13 @@
                   </size>
                  </property>
                 </spacer>
+               </item>
+               <item row="1" column="9">
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>%</string>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="0">
                 <spacer name="horizontalSpacer">
@@ -185,15 +192,36 @@
                  </property>
                 </spacer>
                </item>
-               <item row="1" column="1">
+               <item row="1" column="4">
+                <widget class="QSpinBox" name="spinBox_salt">
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="5">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>%</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
                 <widget class="QLabel" name="label_3">
                  <property name="text">
                   <string>Ruido aditivo</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="4">
-                <spacer name="horizontalSpacer_3">
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="checkBox_dynamicNoise">
+                 <property name="text">
+                  <string>Ruido Dinámico</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <spacer name="horizontalSpacer_4">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -209,14 +237,26 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="pushButton_addNoise">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
                </font>
               </property>
               <property name="text">
-               <string>Entrenar</string>
+               <string>Agregar ruido</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_restartImage">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Restablecer imagen</string>
               </property>
              </widget>
             </item>
@@ -249,6 +289,16 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QLabel" name="label_Onehot">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </widget>
@@ -270,8 +320,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>536</width>
-             <height>593</height>
+             <width>593</width>
+             <height>675</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
@@ -361,8 +411,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>536</width>
-             <height>593</height>
+             <width>593</width>
+             <height>675</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -425,8 +475,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>536</width>
-             <height>593</height>
+             <width>593</width>
+             <height>675</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -450,8 +500,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>512</width>
-                 <height>237</height>
+                 <width>569</width>
+                 <height>278</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -483,8 +533,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>512</width>
-                 <height>237</height>
+                 <width>569</width>
+                 <height>278</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
