@@ -11,7 +11,7 @@ from sys import platform
 
 
 def fun_threading(a):
-    text="¡Hola!\nReconocimiento de patrones\nEstrada Bernal José Bryan\nLara Casares Jaime Arturo"
+    text="¡Hola!\nReconocimiento de patrones\nEstrada Bernal José Bryan\nLara Cázares Jaime Arturo"
     i=0 
     flag = True
     while True:
