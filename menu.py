@@ -56,7 +56,7 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.btnKNn.setText(_translate("Form", "Clasificador KNN"))
         self.btnMetricas.setText(_translate("Form", "Clasificador por Metricas"))
-        self.btnNeurona.setText(_translate("Form", "Perceptron"))
+        self.btnNeurona.setText(_translate("Form", "Perceptrón"))
         self.btnProyecto.setText(_translate("Form", "Proyecto"))
 
 

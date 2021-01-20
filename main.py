@@ -7,8 +7,11 @@ import threading
 import time
 import os
 
+from sys import platform
+
+
 def fun_threading(a):
-    text="Hola\nReconocimiento de patrones\nEstrada Bernal José Bryan\nLara Casares Jaime Arturo"
+    text="¡Hola!\nReconocimiento de patrones\nEstrada Bernal José Bryan\nLara Casares Jaime Arturo"
     i=0 
     flag = True
     while True:
@@ -24,14 +27,18 @@ def fun_threading(a):
         time.sleep(.2)
 
 def funcOpen(a):
+    pythonCommand = 'python3'
+    if platform == "win32":
+        pythonCommand = 'python'
+
     if a==1: 
-        t = threading.Thread(target=os.system, args=("python3 Clasificador-KNN/main.py",))
+        t = threading.Thread(target=os.system, args=(pythonCommand + " Clasificador-KNN/main.py",))
     if a==2:
-        t = threading.Thread(target=os.system, args=("python3 Neurona/main.py",))
+        t = threading.Thread(target=os.system, args=(pythonCommand + " Neurona/main.py",))
     if a==3:
-        t = threading.Thread(target=os.system, args=("python3 Metricas/main.py",))
+        t = threading.Thread(target=os.system, args=(pythonCommand + " Metricas/main.py",))
     if a==4:
-        t = threading.Thread(target=os.system, args=("python3 Proyecto/main.py",))
+        t = threading.Thread(target=os.system, args=(pythonCommand + " Proyecto/main.py",))
 
     t.daemon=True
     t.start()
