@@ -206,8 +206,19 @@ class Ui_MainWindow(object):
         self.pushButtonClasificar.setText(_translate("MainWindow", "Clasificar"))
         self.labelRes.setText(_translate("MainWindow", "Resultado"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Clasificar"))
-        self.labelInformation.setText(_translate("MainWindow", "Información"))
-        self.label_4.setText(_translate("MainWindow", "Agregar información importante"))
+        self.labelInformation.setText(_translate("MainWindow", "\
+        Información\
+        \n\nEste software es un proyecto para la materia\
+        \nReconocimiento de Patrones sus creadores son\
+        \n\n\n\
+        Estrada Bernal Jose Bryan\n\
+        Lara Cázares Jaime Arturo\
+        \n\n\n"))
+        self.label_4.setText(_translate("MainWindow", "Reconocimiento de vocales haciendo uso de memoria alfa-beta heteroasociativa\
+        \nEl proyecto consiste en entrenar un sistema a partir \
+        \nde imagenes de vocales para que despues el mismo sistema sea capaz\
+        \nde reconocer vocales mediante imagenes, a estas \
+        \nimagenes se les puede añadir ruido dinamico, sustractivo y aditivo"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Información"))
 
 
