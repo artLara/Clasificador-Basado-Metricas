@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>392</width>
+    <height>361</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background:#78EE9A</string>
+  </property>
+  <widget class="QPushButton" name="btnKNn">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>100</y>
+     <width>211</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background: #3FEEC6; 
+border-radius: 10%; 
+border:1px solid;</string>
+   </property>
+   <property name="text">
+    <string>Clasificador KNN</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnMetricas">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>40</y>
+     <width>211</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background: #3FEEC6; 
+border-radius: 10%; 
+border:1px solid;
+</string>
+   </property>
+   <property name="text">
+    <string>Clasificador por Metricas</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnNeurona">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>160</y>
+     <width>211</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background: #3FEEC6; 
+border-radius: 10%; 
+border:1px solid;</string>
+   </property>
+   <property name="text">
+    <string>Perceptron</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnProyecto">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>220</y>
+     <width>211</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background: #3FEEC6; 
+border-radius: 10%; 
+border:1px solid;</string>
+   </property>
+   <property name="text">
+    <string>Proyecto</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblNames">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>270</y>
+     <width>391</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
