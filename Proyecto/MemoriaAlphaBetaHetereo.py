@@ -4,9 +4,9 @@ from scipy import stats as st
 
 class MemoriaAlphaBetaHetereo():
     def __init__(self):
-        self.M = np.zeros((5, 400), dtype=int) #Inicializar con ceros matriz M
-        self.W = np.zeros((5, 400), dtype=int) #Inicializar con ceros matriz W
         self.y = self.generarEtiquetasOnehot() #Inicializar etiquetas
+        self.M = np.zeros((self.y[0].shape[0], 400), dtype=int) #Inicializar con ceros matriz M
+        self.W = np.zeros((self.y[0].shape[0], 400), dtype=int) #Inicializar con ceros matriz W
         self.vocales = self.getVocales()
         self.entrenar() #Entrenameinto de la memoria
 
@@ -37,19 +37,26 @@ class MemoriaAlphaBetaHetereo():
         # y.append(np.array([1,1,1,0,1]))#Para O
         # y.append(np.array([1,1,1,1,0]))#Para U
 
-        ## Efectiva pero no si se equivoca manda todo a la U en el tipo min
-        y.append(np.array([1,0,0,0,0]))#Para A 
-        y.append(np.array([1,1,0,0,0]))#Para E
-        y.append(np.array([1,1,1,0,0]))#Para I
-        y.append(np.array([1,1,1,1,0]))#Para O
-        y.append(np.array([1,1,1,1,1]))#Para U
+        # ## Efectiva pero si se equivoca manda todo a la U en el tipo min
+        # y.append(np.array([1,0,0,0,0]))#Para A 
+        # y.append(np.array([1,1,0,0,0]))#Para E
+        # y.append(np.array([1,1,1,0,0]))#Para I
+        # y.append(np.array([1,1,1,1,0]))#Para O
+        # y.append(np.array([1,1,1,1,1]))#Para U
 
-        ## Efectiva pero no si se equivoca manda todo a la U
+        ## Efectiva pero si se equivoca manda todo a la U
         # y.append(np.array([1,0,0,0,0]))#Para A 
         # y.append(np.array([1,1,0,0,0]))#Para E
         # y.append(np.array([0,0,1,1,1]))#Para I
         # y.append(np.array([0,1,1,0,0]))#Para O
         # y.append(np.array([0,0,0,0,1]))#Para U
+
+        ## Efectiva para ambos tipos memoria pero no para ruido mixto
+        y.append(np.array([1,0,0,0,0,0]))#Para A 
+        y.append(np.array([1,1,0,0,0,0]))#Para E
+        y.append(np.array([1,1,1,0,0,0]))#Para I
+        y.append(np.array([1,1,1,1,0,0]))#Para O
+        y.append(np.array([1,1,1,1,1,0]))#Para U
         return y
 
     def alpha(self, x, y):
@@ -81,11 +88,11 @@ class MemoriaAlphaBetaHetereo():
     def calcularMatrices(self):
         #Inicializacion de matrices con ceros
         matrices = []
-        matrices.append(np.zeros((5, 400), dtype=int))#Matriz para A
-        matrices.append(np.zeros((5, 400), dtype=int))#Matriz para E
-        matrices.append(np.zeros((5, 400), dtype=int))#Matriz para I
-        matrices.append(np.zeros((5, 400), dtype=int))#Matriz para O
-        matrices.append(np.zeros((5, 400), dtype=int))#Matriz para U
+        matrices.append(np.zeros((self.y[0].shape[0], 400), dtype=int))#Matriz para A
+        matrices.append(np.zeros((self.y[0].shape[0], 400), dtype=int))#Matriz para E
+        matrices.append(np.zeros((self.y[0].shape[0], 400), dtype=int))#Matriz para I
+        matrices.append(np.zeros((self.y[0].shape[0], 400), dtype=int))#Matriz para O
+        matrices.append(np.zeros((self.y[0].shape[0], 400), dtype=int))#Matriz para U
 
         #Calculo de YxX
         for k in range(len(self.vocales)):
@@ -132,8 +139,8 @@ class MemoriaAlphaBetaHetereo():
         # img = img[::-1]
         # print('Flip image', img)
 
-        recuperadoMax = np.zeros((5), dtype=int)
-        recuperadoMin = np.zeros((5), dtype=int)
+        recuperadoMax = np.zeros((self.y[0].shape[0]), dtype=int)
+        recuperadoMin = np.zeros((self.y[0].shape[0]), dtype=int)
 
         for i in range(self.M.shape[0]):
             minimo = 2
